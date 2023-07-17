@@ -84,14 +84,7 @@ BalloonEditor.create(editorElement, {
       "ckbox",
     ],
   },
-  toolbar: [
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-      "|",
-      "link",
-	],
+  toolbar: ["bold", "italic", "underline", "strikethrough", "|", "link"],
   link: {
     defaultProtocol: "https://",
   },

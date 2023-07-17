@@ -20,7 +20,7 @@ body {
   align-items: center;
   background: #fff;
   box-shadow: 0 3px 5px hsl(0deg 0% 0% / 7.06%);
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -36,17 +36,22 @@ body {
   padding: 0 20px;
 }
 
-h1 {
+#title {
   margin-top: 100px;
-  font-size: 36px;
   padding-bottom: 20px;
   border-bottom: 1px solid #ddd;
+}
+
+h1,
+h2 {
+  font-size: 36px;
 }
 
 #editor {
   padding: 0 0 5px 30px;
 }
 
+#title.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable),
 #editor.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
   border-color: transparent;
   box-shadow: none;
@@ -86,7 +91,7 @@ h1 {
   align-items: center;
   animation-name: fade-out-label;
   animation-duration: 2s;
-  opacity: .3;
+  opacity: 0.3;
   filter: grayscale(1);
 }
 
@@ -106,7 +111,7 @@ h1 {
     filter: grayscale(0);
   }
   to {
-    opacity: .3;
+    opacity: 0.3;
     filter: grayscale(1);
   }
 }

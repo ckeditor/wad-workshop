@@ -18,6 +18,7 @@
     "@ckeditor/ckeditor5-comments": "^38.0.0",
     "@ckeditor/ckeditor5-editor-balloon": "^38.0.0",
     "@ckeditor/ckeditor5-editor-classic": "^38.0.0",
+    "@ckeditor/ckeditor5-editor-multi-root": "^38.1.1",
     "@ckeditor/ckeditor5-essentials": "^38.0.0",
     "@ckeditor/ckeditor5-heading": "^38.0.0",
     "@ckeditor/ckeditor5-image": "^38.0.0",

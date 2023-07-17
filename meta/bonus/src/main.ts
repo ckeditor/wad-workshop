@@ -24,9 +24,8 @@ import {
 } from "@ckeditor/ckeditor5-image";
 import { CKBox } from "@ckeditor/ckeditor5-ckbox";
 import { CloudServices } from "@ckeditor/ckeditor5-cloud-services";
-import { licenseKey, tokenUrl, webSocketUrl } from "./token.ts";
-import { BalloonEditor } from "@ckeditor/ckeditor5-editor-balloon";
-import { BlockToolbar } from "@ckeditor/ckeditor5-ui";
+import { licenseKey, tokenUrl, webSocketUrl } from "./add-token.ts";
+import { BlockToolbar, BalloonToolbar } from "@ckeditor/ckeditor5-ui";
 import {
   PresenceList,
   RealTimeCollaborativeComments,
@@ -39,109 +38,117 @@ import {
   DragDropBlockToolbar,
   DragDropExperimental,
 } from "ckeditor5/src/clipboard.js";
+import { MultiRootEditor } from "@ckeditor/ckeditor5-editor-multi-root";
 
 declare global {
   interface Window {
-    editor: BalloonEditor;
+    editor: MultiRootEditor;
   }
 }
 
 const editorElement = document.getElementById("editor");
+const titleElement = document.getElementById("title");
 
-if (!editorElement) {
+if (!editorElement || !titleElement) {
   throw new Error("No place for the editor!");
 }
 
-BalloonEditor.create(editorElement, {
-  licenseKey: licenseKey,
-  cloudServices: {
-    tokenUrl: tokenUrl,
-    webSocketUrl: webSocketUrl,
-  },
-  plugins: [
-    SlashCommand,
-    Mention,
-    Comments,
-    RealTimeCollaborativeComments,
-    RealTimeCollaborativeEditing,
-    PresenceList,
-    CKBox,
-    CloudServices,
-    PictureEditing,
-    ImageUpload,
-    Image,
-    ImageResize,
-    Table,
-    TableToolbar,
-    Autosave,
-    Essentials,
-    Bold,
-    Italic,
-    Underline,
-    Strikethrough,
-    Autoformat,
-    Paragraph,
-    Heading,
-    Link,
-    AutoLink,
-    DocumentList,
-    BlockToolbar,
-    DragDropExperimental,
-    DragDropBlockToolbar,
-  ],
-  blockToolbar: {
-    items: [
-      "heading",
-      "|",
-      "undo",
-      "redo",
-      "|",
-      "numberedList",
-      "bulletedList",
-      "|",
-      "insertTable",
-      "|",
-      "imageUpload",
-      "ckbox",
+MultiRootEditor.create(
+  { main: editorElement, title: titleElement },
+  {
+    licenseKey: licenseKey,
+    cloudServices: {
+      tokenUrl: tokenUrl,
+      webSocketUrl: webSocketUrl,
+    },
+    plugins: [
+      SlashCommand,
+      Mention,
+      Comments,
+      RealTimeCollaborativeComments,
+      RealTimeCollaborativeEditing,
+      PresenceList,
+      CKBox,
+      CloudServices,
+      PictureEditing,
+      ImageUpload,
+      Image,
+      ImageResize,
+      Table,
+      TableToolbar,
+      Autosave,
+      Essentials,
+      Bold,
+      Italic,
+      Underline,
+      Strikethrough,
+      Autoformat,
+      Paragraph,
+      Heading,
+      Link,
+      AutoLink,
+      DocumentList,
+      BlockToolbar,
+      BalloonToolbar,
+      DragDropExperimental,
+      DragDropBlockToolbar,
     ],
-  },
-  toolbar: [
+    blockToolbar: {
+      items: [
+        "heading",
+        "|",
+        "undo",
+        "redo",
+        "|",
+        "numberedList",
+        "bulletedList",
+        "|",
+        "insertTable",
+        "|",
+        "imageUpload",
+        "ckbox",
+      ],
+    },
+    balloonToolbar: [
       "bold",
       "italic",
       "underline",
       "strikethrough",
       "|",
       "link",
-	],
-  link: {
-    defaultProtocol: "https://",
-  },
-  autosave: {
-    waitingTime: 500,
-    save: (editor) => {
-      return saveData(editor as BalloonEditor);
+      "comment",
+      "commentsArchive",
+    ],
+    link: {
+      defaultProtocol: "https://",
     },
-  },
-  table: {
-    defaultHeadings: { rows: 1, columns: 1 },
-    contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
-  },
-  placeholder: "Start writing...",
-  collaboration: {
-    channelId: "sadasdasd",
-  },
-  presenceList: {
-    container: document.getElementById("presence-list-container")!,
-  },
-  sidebar: {
-    container: document.getElementById("sidebar")!,
-  },
-  ui: {
-    viewportOffset: {
-      top: 80,
+    autosave: {
+      waitingTime: 500,
+      save: (editor) => {
+        return saveData(editor as MultiRootEditor);
+      },
     },
-  },
-}).then((editor) => {
+    table: {
+      defaultHeadings: { rows: 1, columns: 1 },
+      contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+    },
+    placeholder: "Start writing...",
+    collaboration: {
+      channelId: "1234",
+    },
+    presenceList: {
+      container: document.getElementById("presence-list-container")!,
+    },
+    sidebar: {
+      container: document.getElementById("sidebar")!,
+    },
+    ui: {
+      viewportOffset: {
+        top: 80,
+      },
+    },
+  }
+).then((editor) => {
   window.editor = editor;
   CKEditorInspector.attach(editor);
   displayStatus(editor);
@@ -155,7 +162,7 @@ BalloonEditor.create(editorElement, {
   startBlockToolbarScrollUpdater(editor);
 });
 
-function saveData(editor: BalloonEditor) {
+function saveData(editor: MultiRootEditor) {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       const version = editor.plugins.get(
@@ -171,7 +178,7 @@ function saveData(editor: BalloonEditor) {
 
       console.group();
       console.log("Saved!");
-      console.log(editor.data.get());
+      console.log(editor.getFullData());
       console.log(version);
       console.log(commentThreadsData);
       console.groupEnd();
@@ -180,7 +187,7 @@ function saveData(editor: BalloonEditor) {
   });
 }
 
-function displayStatus(editor: BalloonEditor) {
+function displayStatus(editor: MultiRootEditor) {
   const pendingActions = editor.plugins.get("PendingActions");
   const statusIndicator = document.getElementById("autosave-status");
 
@@ -195,7 +202,7 @@ function displayStatus(editor: BalloonEditor) {
 
 let currentAnnotationsMode: "inline" | "wideSidebar";
 
-function updateSidebarDisplayMode(editor: BalloonEditor) {
+function updateSidebarDisplayMode(editor: MultiRootEditor) {
   const annotationsUIs = editor.plugins.get("AnnotationsUIs");
   let newMode: typeof currentAnnotationsMode;
 
@@ -211,7 +218,7 @@ function updateSidebarDisplayMode(editor: BalloonEditor) {
   }
 }
 
-function startBlockToolbarScrollUpdater(editor: BalloonEditor) {
+function startBlockToolbarScrollUpdater(editor: MultiRootEditor) {
   // Make sure the block toolbar button follows the content when the container is scrolled.
   editor.ui.view.listenTo(
     document.querySelector(".container") as HTMLElement,
